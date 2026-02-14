@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import AuthLayout from "../../components/layouts/AuthLayout";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/inputs/Input";
 import { validateEmail } from "../../utils/helper";
 import ProfilePhotoSelector from "../../components/inputs/ProfilePhotoSelector";
+import axiosInstance from "../../utils/axiosInstance";
+import { API_PATHS } from "../../utils/apiPaths";
+import { UserContext } from "../../context/userContext";
+import uploadImage from "../../utils/uploadImage";
 
 const SignUp = () => {
   const [profilePic, setProfilePic] = useState(null);
@@ -13,6 +17,8 @@ const SignUp = () => {
 
   const [error, setError] = useState({ email: "", password: "", fullName: "" });
 
+  const { updateUser } = useContext(UserContext);
+
   const navigate = useNavigate();
 
   // Handle Sign up from submit
@@ -21,7 +27,7 @@ const SignUp = () => {
     let emailError = "";
     let passwordError = "";
     let fullNameError = "";
-    // let profileImageUrl = "";
+    let profileImageUrl = "";
 
     if (!validateEmail(email)) {
       emailError = "Please enter a valid email address.";
@@ -44,10 +50,49 @@ const SignUp = () => {
 
     // Stop execution if there are any errors
     if (emailError || passwordError || fullNameError) return;
+
+    try {
+      // uplaod image if present
+      if (profilePic) {
+        const imgUploadRes = await uploadImage(profilePic);
+        profileImageUrl = imgUploadRes.imageUrl || "";
+      }
+
+      const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
+        fullName,
+        email,
+        password,
+        profileImageUrl
+      });
+      const { token, user } = response.data;
+
+      if (token) {
+        localStorage.setItem("token", token);
+        updateUser(user);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        // Keep existing field errors, update 'general'
+        setError({
+          fullName: "",
+          email: "",
+          password: "",
+          general: error.response.data.message,
+        });
+      } else {
+        setError({
+          fullName: "",
+          email: "",
+          password: "",
+          general: "Something went wrong, Please try again.",
+        });
+      }
+    }
   };
   return (
     <AuthLayout>
-      <div className="lg:w-full h-2/3 md:h-full mt-0 md:mt-0 flex flex-col justify-center">
+      <div className="lg:w-full h-full md:h-full mt-0 md:mt-0 flex flex-col justify-center">
         <div className="text-4xl font-extrabold text-black">
           Create an Account
         </div>
@@ -93,7 +138,7 @@ const SignUp = () => {
               )}
             </div>
 
-            <div className="col-span-1 md:col-span-2 flex flex-col">
+            <div className="col-span-2 md:col-span-2 flex flex-col">
               <Input
                 value={password}
                 onChange={({ target }) => {
