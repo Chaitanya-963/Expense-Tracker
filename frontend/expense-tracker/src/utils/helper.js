@@ -37,3 +37,24 @@ export const addThousandsSeparator = (num) => {
     ? `${formattedInteger}.${fractionalPart}`
     : formattedInteger;
 };
+
+// Update your helper.js as follows:
+// utils/helper.js
+export const prepareExpenseBarChartData = (data = []) => {
+  if (!data || data.length === 0) return [];
+
+  // Grouping by category
+  const grouped = data.reduce((acc, item) => {
+    const key = item.category || "Other";
+    acc[key] = (acc[key] || 0) + (item.amount || 0);
+    return acc;
+  }, {});
+
+  // Format for Recharts
+  return Object.keys(grouped).map((cat) => ({
+    month: cat, 
+    amount: grouped[cat],
+    category: cat,
+  }));
+};
+
