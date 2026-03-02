@@ -18,69 +18,59 @@ const CustomPieChart = ({
   showTextAnchor,
 }) => {
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <PieChart>
-        <Pie
-          data={data}
-          dataKey="amount"
-          nameKey="name"
-          cx="50%"
-          cy="50%"
-          outerRadius={130}
-          innerRadius={100}
-          paddingAngle={0.5}
-          isAnimationActive={true}
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-          ))}
-        </Pie>
-        <Tooltip
-          content={CustomTooltip}
-          cursor={{ fill: "transparent" }}
-          // contentStyle={{
-          //   backgroundColor: "#fff",
-          //   borderRadius: "8px",
-          //   border: "none",
-          //   boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-          // }}
-          // itemStyle={{ color: "#333", fontSize: "14px" }}
-          // labelStyle={{ fontWeight: "bold", color: "#875CF5" }}
-          // cursor={{ fill: "transparent" }}
-        />
-        <Legend
-        content={CustomLegend}
-        />
-        {showTextAnchor && (
-          <g>
-            <text
-              x="50%"
-              y="50%"
-              dy={-20}
-              textAnchor="middle"
-              fill="#666"
-              style={{ fontSize: "14px", pointerEvents: "none" }}
-            >
-              {label}
-            </text>
-            <text
-              x="50%"
-              y="50%"
-              dy={8}
-              textAnchor="middle"
-              fill="#333"
-              style={{
-                fontSize: "24px",
-                fontWeight: "600",
-                pointerEvents: "none",
-              }}
-            >
-              {totalAmount}
-            </text>
-          </g>
-        )}
-      </PieChart>
-    </ResponsiveContainer>
+    <div className="w-full h-[300px]">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            dataKey="amount"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            outerRadius={100} 
+            innerRadius={80}
+            paddingAngle={2}
+            isAnimationActive={true}
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+            ))}
+          </Pie>
+
+          <Tooltip content={<CustomTooltip />} />
+          
+          <Legend content={<CustomLegend />} verticalAlign="bottom" />
+
+          {showTextAnchor && (
+            <g>
+              <text
+                x="50%"
+                y="50%"
+                textAnchor="middle"
+                dominantBaseline="middle" 
+              >
+                <tspan 
+                  x="50%" 
+                  dy="-1.2em" 
+                  fill="#6b7280" 
+                  style={{ fontSize: "12px", fontWeight: "500" }}
+                >
+                  {label}
+                </tspan>
+                <tspan 
+                  x="50%" 
+                  dy="1.5em" 
+                  fill="#111827" 
+                  style={{ fontSize: "20px", fontWeight: "700" }}
+                >
+                  {totalAmount}
+                </tspan>
+              </text>
+            </g>
+          )}
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
