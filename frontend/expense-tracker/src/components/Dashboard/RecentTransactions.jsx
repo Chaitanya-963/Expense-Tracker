@@ -3,14 +3,14 @@ import { LuArrowRight } from "react-icons/lu";
 import moment from "moment";
 import TransactionInfoCard from "../Cards/TransactionInfoCard";
 
-const RecentTransactions = ({ transactions, onSeeMore }) => {
+const RecentTransactions = ({ transactions, }) => {
   return (
     <div className="card">
       <div className="flex items-center justify-between">
         <h5 className="text-lg">Recent Transactions</h5>
-        <button className="card-btn" onClick={onSeeMore}>
+        {/* <button className="card-btn" onClick={onSeeMore}>
           See All <LuArrowRight className="text-base" />
-        </button>
+        </button> */}
       </div>
 
       <div className="mt-6">
