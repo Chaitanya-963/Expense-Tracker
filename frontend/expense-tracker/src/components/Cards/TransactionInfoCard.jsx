@@ -13,7 +13,7 @@ const TransactionInfoCard = ({
   amount,
   type,
   hideDeleteBtn,
-  onDelete, // Added missing prop
+  onDelete, 
 }) => {
   // Simplified styling logic
   const isIncome = type === "income";
