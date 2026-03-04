@@ -1,3 +1,4 @@
+import moment from "moment"
 export const validateEmail = (email) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
@@ -38,8 +39,6 @@ export const addThousandsSeparator = (num) => {
     : formattedInteger;
 };
 
-// Update your helper.js as follows:
-// utils/helper.js
 export const prepareExpenseBarChartData = (data = []) => {
   if (!data || data.length === 0) return [];
 
@@ -52,9 +51,24 @@ export const prepareExpenseBarChartData = (data = []) => {
 
   // Format for Recharts
   return Object.keys(grouped).map((cat) => ({
-    month: cat, 
+    month: cat,
     amount: grouped[cat],
     category: cat,
   }));
 };
 
+export const prepareIncomeBarChartData = (data = []) => {
+  if (!data || data.length === 0) return [];
+
+  const grouped = data.reduce((acc, item) => {
+    const day = moment(item.date).format("DD MMM"); 
+    
+    acc[day] = (acc[day] || 0) + (item.amount || 0);
+    return acc;
+  }, {});
+
+  return Object.keys(grouped).map((day) => ({
+    date: day, // Changed key name to 'date' to reflect the day-wise view
+    amount: grouped[day],
+  }));
+};
