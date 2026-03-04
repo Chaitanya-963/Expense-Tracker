@@ -1,4 +1,4 @@
-import moment from "moment"
+import moment from "moment";
 export const validateEmail = (email) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
@@ -7,14 +7,13 @@ export const validateEmail = (email) => {
 export const getInitial = (name) => {
   if (!name) return "";
 
-  const words = name.split(" ");
-  let initials = "";
-
-  for (let i = 0; i < Math.min(words.length, 2); i++) {
-    initials += words[i][0];
-  }
-
-  return initials.toUpperCase();
+   return name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
 };
 
 export const addThousandsSeparator = (num) => {
@@ -22,8 +21,7 @@ export const addThousandsSeparator = (num) => {
 
   let [integerPart, fractionalPart] = num.toString().split(".");
 
-  // Regex for Indian Formatting (Lakhs/Crores)
-  // This separates the last 3 digits, then groups the rest in 2s
+
   let lastThree = integerPart.substring(integerPart.length - 3);
   let otherNumbers = integerPart.substring(0, integerPart.length - 3);
 
@@ -42,14 +40,14 @@ export const addThousandsSeparator = (num) => {
 export const prepareExpenseBarChartData = (data = []) => {
   if (!data || data.length === 0) return [];
 
-  // Grouping by category
+  
   const grouped = data.reduce((acc, item) => {
     const key = item.category || "Other";
     acc[key] = (acc[key] || 0) + (item.amount || 0);
     return acc;
   }, {});
 
-  // Format for Recharts
+
   return Object.keys(grouped).map((cat) => ({
     month: cat,
     amount: grouped[cat],
@@ -61,14 +59,31 @@ export const prepareIncomeBarChartData = (data = []) => {
   if (!data || data.length === 0) return [];
 
   const grouped = data.reduce((acc, item) => {
-    const day = moment(item.date).format("DD MMM"); 
-    
+    const day = moment(item.date).format("DD MMM");
+
     acc[day] = (acc[day] || 0) + (item.amount || 0);
     return acc;
   }, {});
 
   return Object.keys(grouped).map((day) => ({
-    date: day, // Changed key name to 'date' to reflect the day-wise view
+    date: day, 
     amount: grouped[day],
   }));
+};
+
+export const prepareExpenseLineChartData = (data = []) => {
+  if (!data || data.length === 0) return [];
+
+  const groupedData = data.reduce((acc, item) => {
+    const dateKey = moment(item?.date).format("DD MMM");
+    acc[dateKey] = (acc[dateKey] || 0) + (item?.amount || 0);
+    return acc;
+  }, {});
+
+  return Object.keys(groupedData)
+    .map((date) => ({
+      date, // Using 'date' is more semantic than 'months' for a daily view
+      amount: groupedData[date],
+    }))
+    .sort((a, b) => moment(a.date, "DD MMM").diff(moment(b.date, "DD MMM")));
 };
