@@ -5,7 +5,6 @@ const CustomLegend = ({ payload }) => {
     <div className="flex flex-wrap justify-center gap-6 mt-4">
       {payload.map((entry, index) => (
         <div key={`legend-${index}`} className="flex items-center">
-          {/* iconType="circle" and iconSize={10} */}
           <div
             className="rounded-full"
             style={{ 
@@ -15,7 +14,6 @@ const CustomLegend = ({ payload }) => {
             }}
           ></div>
 
-          {/* Formatter styles: color, fontSize, fontWeight, paddingLeft */}
           <span
             style={{
               color: "#64748b",
